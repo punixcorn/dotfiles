@@ -1,0 +1,9 @@
+#!/bin/bash
+
+[ -z $1 ] && $1=1
+
+if [ $1 -eq 1 ]; then
+	rofi -no-config -no-lazy-grab -show drun -modi drun -theme ~/.config/i3/rofi/menu/launcher1.rasi
+elif [ $1 -eq 2 ]; then
+	rofi -no-config -no-lazy-grab -show drun -modi drun -theme ~/.config/i3/rofi/menu/launcher2.rasi
+fi

@@ -1,0 +1,175 @@
+#!/bin/bash
+# using pywal
+override=$1               # means must regen wal even if it is gened
+walToggle=0               # means must regen wal if alreay gened, no need
+backend=$(cat ~/.backend) # the backend to use
+wallpaperdir="$HOME/.config/i3/wallpaper/wallpaper.png"
+DIR="$HOME/.config/i3/"
+
+## -_-_-_-_-_-_-_-_-_ Source wal colors -_-_-_-_-_-_-_-_-_ ##
+
+# source the color wal generated
+function sourcewal() {
+	echo -e "\e[32m[*] \e[0mApplying Theme"
+	[ -f "$HOME/.cache/wal/colors.sh" ] && source "$HOME/.cache/wal/colors.sh" || walToggle=1
+}
+
+### getting the theme colors
+sourcewal
+
+### checks
+if [ $walToggle -eq 1 ] || [ "$override" != "" ]; then
+	[ -f "$wallpaperdir" ] && [ -f /bin/wal ] && wal -c || {
+		echo "pywal not installed or wallpaper not found"
+		exit 1
+	}
+
+	echo -e "\e[32m[*] \e[0mSetting wallpaper..."
+	cp "$wallpaperdir" "$HOME/.wallpaper.png" 2>>~/log.txt
+	[ "$backend" = "" ] && backend="wal"
+	wal -i "$wallpaperdir" --backend "$backend" >>~/log.txt || {
+		echo "wallpaper or backend not found using Default"
+		echo "wal" >~/.backend && backend="wal"
+		wal -i "$wallpaperdir" --backend "$backend" >>~/log.txt
+	}
+	echo -e "\e[32m[*] \e[0mGenerating Theme..."
+	sourcewal
+
+fi
+
+## -_-_-_-_-_-_-_-_-_ Assign Colors -_-_-_-_-_-_-_-_-_ ##
+getcolors() {
+	FOREGROUND="$foreground"
+	BACKGROUND="$background"
+	CURSOR="$cursor"
+	BLACK="$color0"
+	RED="$color1"
+	GREEN="$color2"
+	YELLOW="$color3"
+	BLUE="$color4"
+	MAGENTA="$color5"
+	CYAN="$color6"
+	WHITE="$color7"
+	ALTBLACK="$color8"
+	ALTRED="$color9"
+	ALTGREEN="$color10"
+	ALTYELLOW="$color11"
+	ALTBLUE="$color12"
+	ALTMAGENTA="$color13"
+	ALTCYAN="$color14"
+	ALTWHITE="$color15"
+}
+
+## Write polybar colors file with current theme colors
+polybarTheme() {
+	echo -e "\e[32m[*] \e[0mApplying colors to polybar"
+	cat >"$DIR"/polybar/colors.ini <<-EOF
+		[color]
+		foreground =    ${FOREGROUND}
+		background =    ${BACKGROUND}
+		primary =       ${CURSOR}
+		workcolor =     ${FOREGROUND}
+		red =           ${RED}
+		green =         ${GREEN}
+		yellow =        ${YELLOW}
+	EOF
+}
+
+## Write alacritty colors.yml file with current theme colors
+alacrittyTheme() {
+	echo -e "\e[32m[*] \e[0mApplying colors to Alacritty"
+	cat >"$DIR"/alacritty/colors.yml <<-_EOF_
+		## Colors configuration
+		colors:
+		  # Default colors
+		  primary:
+		    background: '${BACKGROUND}'
+		    foreground: '${FOREGROUND}'
+
+		  # Normal colors
+		  normal:
+		    black:   '${BLACK}'
+		    red:     '${RED}'
+		    green:   '${GREEN}'
+		    yellow:  '${YELLOW}'
+		    blue:    '${BLUE}'
+		    magenta: '${MAGENTA}'
+		    cyan:    '${CYAN}'
+		    white:   '${WHITE}'
+
+		  # Bright colors
+		  bright:
+		    black:   '${ALTBLACK}'
+		    red:     '${ALTRED}'
+		    green:   '${ALTGREEN}'
+		    yellow:  '${ALTYELLOW}'
+		    blue:    '${ALTBLUE}'
+		    magenta: '${ALTMAGENTA}'
+		    cyan:    '${ALTCYAN}'
+		    white:   '${ALTWHITE}'
+	_EOF_
+}
+
+
+kittyTheme() {
+	echo -e "\e[32m[*] \e[0mApplying colors to Kitty"
+	[ -f ~/.cache/wal/colors-kitty.conf ] && cp ~/.cache/wal/colors-kitty.conf ~/.config/i3/kitty/color.conf
+}
+
+ ## Write rofi colors.rasi file with current theme colors
+ rofiTheme() {
+ 	echo -e "\e[32m[*] \e[0mApplying colors to rofi"
+ 	cat > $DIR/rofi/dependencies/colors.rasi <<-EOF
+ 		        * {
+ 		            background:         ${BACKGROUND};
+ 		            background-alt:     ${CURSOR};
+ 		            foreground:         ${FOREGROUND};
+ 		            selected:           ${BLUE};
+ 		            active:             ${YELLOW};
+ 		            urgent:             ${RED};
+ 		        }
+                EOF
+ }
+
+
+## Write dunstrc file with current theme colors
+dunstTheme() {
+    echo -e "\e[32m[*] \e[0mApplying colors to dunst"
+    sed -i '/urgency_low/Q' "$DIR"/dunstrc
+    cat >"$DIR"/dunstrc <<-_EOF_
+    [urgency_low]
+    timeout = 3
+    background =   "${BACKGROUND}"
+    foreground =   "${FOREGROUND}"
+    frame_color =  "${BLUE}"
+
+    [urgency_normal]
+    timeout = 5
+    background =   "${BACKGROUND}"
+    foreground =   "${FOREGROUND}"
+    frame_color =  "${BLUE}"
+
+    [urgency_critical]
+    timeout = 0
+    background =   "${BACKGROUND}"
+    foreground =   "${FOREGROUND}"
+    frame_color =  "${RED}"
+    _EOF_
+}
+
+firefoxTheme() {
+	echo -e "\e[32m[*] \e[0mApplying colors to Firefox"
+	[ -f /bin/firefox ] && [ -f /bin/pywalfox ] && [ -f /bin/wal ] && pywalfox install >/dev/null 2>&1 || echo -e "\e[32m[ERR] \e[0mfirefox pywal failed or not found\n"
+}
+
+## Execute functions and run main
+main() {
+	getcolors
+	i3colors
+	polybarTheme
+	alacrittyTheme
+	rofiTheme
+	dunstTheme
+	firefoxTheme
+}
+main

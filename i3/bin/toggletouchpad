@@ -1,0 +1,14 @@
+#!/bin/bash
+# change the number for the touch pad if DEVICE doesnt work
+
+#DEVICE=$(xinput --list | awk '/Touchpad/ {print $6}' | sed 's/id=//g')
+DEVICE=$(xinput --list | awk '/Touchpad/' | sed 's/.*.id=//g' | awk ' { print $1} ')
+STATE=$(xinput list-props $DEVICE | grep "Device Enabled" | awk ' { print $NF } ')
+
+echo $DEVICE=$STATE
+
+if [[ "$STATE" = "1" ]]; then
+	xinput disable $DEVICE
+elif [[ "$STATE" = "0" ]]; then
+	xinput enable $DEVICE
+fi

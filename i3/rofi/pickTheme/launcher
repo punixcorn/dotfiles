@@ -1,0 +1,3 @@
+#!/bin/bash
+# add your wallpaper to ~/.config/i3/wallpaper/ it will automatically show
+rofi -modi Theme:$HOME/.config/i3/bin/setRofiTheme -theme ~/.config/i3/rofi/network/network.rasi -show Theme

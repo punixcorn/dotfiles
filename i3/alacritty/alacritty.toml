@@ -1,0 +1,27 @@
+import = ["$HOME/.config/i3/alacritty/colors.toml", "$HOME/.config/i3/alacritty/fonts.toml"]
+live_config_reload = true
+
+[cursor]
+unfocused_hollow = true
+
+[cursor.style]
+blinking = "On"
+shape = "Block"
+
+[env]
+TERM = "alacritty"
+WINIT_X11_SCALE_FACTOR = "1.5"
+
+[window]
+decorations = "full"
+dynamic_title = true
+opacity = 0.8
+startup_mode = "Windowed"
+
+[window.dimensions]
+columns = 84
+lines = 24
+
+[window.padding]
+x = 12
+y = 12

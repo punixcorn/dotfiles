@@ -1,0 +1,2 @@
+#!/bin/bash
+rofi -modi todo:$HOME/.config/i3/rofi/todo/todo -theme ~/.config/i3/rofi/todo/todo.rasi -show todo
