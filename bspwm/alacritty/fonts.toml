@@ -2,13 +2,13 @@
 size = 7.5
 
 [font.bold]
-family = "Fantasque Sans Mono"
+family = "Iosevka"
 
 [font.bold_italic]
-family = "Fantasque Sans Mono"
+family = "Iosevka"
 
 [font.italic]
-family = "Fantasque Sans Mono"
+family = "Iosevka"
 
 [font.normal]
-family = "Fantasque Sans Mono"
+family = "Iosevka"

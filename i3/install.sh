@@ -31,8 +31,8 @@ function debain() {
     sudo apt update
     sudo apt install i3 rofi polybar alacritty dunst feh xss-lock \
         xsettingsd mpc mpd dmenu ncmpcpp alsa-utils network-manager network-manager-dev  \
-        xfce4-power-manager maim xclip light netcat picom \
-        viewnior xdg-user-dirs firefox chromium xorg-xrandr python3 -y
+        xfce4-power-manager maim xclip light netcat-openbsd picom \
+        viewnior xdg-user-dirs firefox-esr chromium python3 -y
 
     python -m pip install --upgrade gobject pywal
 }

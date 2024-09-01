@@ -19,7 +19,7 @@ function pacman() {
         [ ! -f /bin/zsh ] && ./arch-setup/install-zsh.sh || echo "zsh found"
     } || logerr "Cloning failed skipping..."
 
-    sudo pacman -S bspwm sxhkd rofi polybar alacritty dunst feh \
+    sudo pacman -Sy bspwm sxhkd rofi polybar alacritty dunst feh \
         xcb-util-cursor xsettingsd mpc mpd dmenu ncmpcpp python-gobject \
         xfce4-power-manager maim xclip xorg-xbacklight netcat \
         viewnior python-pywal xdg-user-dirs firefox chromium xorg-xrandr python --noconfirm
@@ -29,8 +29,8 @@ function debain() {
     sudo apt update
     sudo apt install bspwm sxhkd rofi polybar alacritty dunst feh \
         xsettingsd mpc mpd dmenu ncmpcpp alsa-utils network-manager network-manager-dev\
-        xfce4-power-manager maim xclip light netcat xss-lock picom \
-        viewnior xdg-user-dirs firefox chromium xorg-xrandr python3 -y
+        xfce4-power-manager maim xclip light netcat-openbsd xss-lock picom \
+        viewnior xdg-user-dirs firefox-esr chromium  python3 -y
 
     python -m pip install --upgrade gobject pywal
 }
