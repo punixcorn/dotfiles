@@ -19,6 +19,12 @@ export PATH="${PATH}:$HOME/.config/bspwm/bin"
 ## Run java applications without issues
 export _JAVA_AWT_WM_NONREPARENTING=1
 
+## Polybar env varibales 
+export DEFAULT_NETWORK_INTERFACE=$(ip route | grep '^default' | awk '{print $5}' | head -n1)
+export DEFAULT_BATTERY=$(ls -1 /sys/class/power_supply | awk '{ print $1 }' | grep BAT)
+export DEFAULT_ADAPTER=$(ls -1 /sys/class/power_supply | awk '{ print $1 }' | grep ADP)
+
+
 ## Bspwm appearance
 CURRENT_BORDER='1'
 CURRENT_GAP='5'

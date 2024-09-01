@@ -23,13 +23,16 @@ function pacman() {
         xcb-util-cursor xsettingsd mpc mpd dmenu ncmpcpp python-gobject \
         xfce4-power-manager maim xclip xorg-xbacklight netcat \
         viewnior python-pywal xdg-user-dirs firefox chromium xorg-xrandr python --noconfirm
+    
+    [ -f /bin/yay ] && yay -S light xfce-polkit || logerr "Failed to install from yay"
+    sudo pacman -S networkmanager-dmenu-git || logerr "Failed to install networkmanager-dmenu-git, please do it mannually"
 }
 
 function debain() {
     sudo apt update
     sudo apt install bspwm sxhkd rofi polybar alacritty dunst feh \
         xsettingsd mpc mpd dmenu ncmpcpp alsa-utils network-manager network-manager-dev\
-        xfce4-power-manager maim xclip light netcat-openbsd xss-lock picom \
+        xfce4-power-manager maim xclip light netcat-openbsd xss-lock picom xbacklight \
         viewnior xdg-user-dirs firefox-esr chromium  python3 -y
 
     python -m pip install --upgrade gobject pywal
@@ -37,6 +40,14 @@ function debain() {
 
 log "Installing Dependencies"
 [ -f /bin/pacman ] && pacman || debain
+
+log "Installing network Manager"
+if [ ! -f /bin/networkmanager_dmenu ]; then
+    git clone https://github.com/firecat53/networkmanager-dmenu.git
+    chmod +x networkmanager-dmenu/networkmanager_dmenu
+    sudo cp networkmanager-dmenu/networkmanager_dmenu /usr/bin/
+    rm -rf networkmanager-dmenu
+fi
 
 log "Copying files over"
 CONFDIR="$HOME/.config/bspwm/"
@@ -94,4 +105,6 @@ if [ $ans = 'Y' ] || [ $ans = 'y' ];then
     bash ~/.config/nvim/install.sh
 fi
 
+log "Running Theme for colors"
+./bin/applyTheme 1
 exit 0

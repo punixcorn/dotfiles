@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# install files for i3 
+# install files for i3
 
 function log() {
     printf "\e[32m[*]\e[0m %s\n" "$1"
@@ -30,7 +30,7 @@ function pacman() {
 function debain() {
     sudo apt update
     sudo apt install i3 rofi polybar alacritty dunst feh xss-lock \
-        xsettingsd mpc mpd dmenu ncmpcpp alsa-utils network-manager network-manager-dev  \
+        xsettingsd mpc mpd dmenu ncmpcpp alsa-utils network-manager network-manager-dev xbacklight \
         xfce4-power-manager maim xclip light netcat-openbsd picom \
         viewnior xdg-user-dirs firefox-esr chromium python3 -y
 
@@ -39,6 +39,15 @@ function debain() {
 
 log "Installing Dependencies"
 [ -f /bin/pacman ] && pacman || debain
+
+log "Installing network Manager"
+if [ ! -f /bin/networkmanager_dmenu ]; then
+    git clone https://github.com/firecat53/networkmanager-dmenu.git
+    chmod +x networkmanager-dmenu/networkmanager_dmenu
+    sudo cp networkmanager-dmenu/networkmanager_dmenu /usr/bin/
+    rm -rf networkmanager-dmenu
+fi
+
 
 # making picom always fails do mannually
 # cd /tmp
@@ -90,20 +99,23 @@ EOF
 echo "install nvim and vim configs? [y,N]"
 read ans
 
-if [ $ans = 'Y' ] || [ $ans = 'y' ];then 
-    [ -f /bin/pacman ] && sudo pacman -S neovim vim || sudo apt install neovim vim 
+if [ $ans = 'Y' ] || [ $ans = 'y' ]; then
+    [ -f /bin/pacman ] && sudo pacman -S neovim vim || sudo apt install neovim vim
     [ -d ~/.vim ] && mv ~/.vim ~/.vim-$(date "+%a-%T")
     [ -d ~/.config/nvim ] && mv ~/.config/nvim ~/.config/nvim-$(date "+%a-%T")
 
     log "Installing vim"
-    git clone https://github.com/punixcorn/vim-dots ~/.vim 
+    git clone https://github.com/punixcorn/vim-dots ~/.vim
     chmod +x ~/.vim/install.sh
     bash ~/.vim/install.sh
 
     log "Installing neovim"
     git clone https://github.com/punixcorn/nvim-dots ~/.config/nvim
-    chmod +x ~/.config/nvim 
+    chmod +x ~/.config/nvim
     bash ~/.config/nvim/install.sh
 fi
+
+log "Running Theme for colors"
+./bin/applyTheme 1
 
 exit 0

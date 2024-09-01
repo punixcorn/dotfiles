@@ -51,3 +51,8 @@ disown
 # wal
 [ -f /bin/wal ] && [ ! -d "$HOME/.cache/wal/" ] && wal -i ~/.config/i3/wallpaper.png 2>/dev/null
 exit 0
+
+## Polybar env varibales 
+export DEFAULT_NETWORK_INTERFACE=$(ip route | grep '^default' | awk '{print $5}' | head -n1)
+export DEFAULT_BATTERY=$(ls -1 /sys/class/power_supply | awk '{ print $1 }' | grep BAT)
+export DEFAULT_ADAPTER=$(ls -1 /sys/class/power_supply | awk '{ print $1 }' | grep ADP)
