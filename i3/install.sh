@@ -20,7 +20,7 @@ function pacman() {
         [ ! -f /bin/zsh ] && ./arch-setup/install-zsh.sh || echo "zsh found"
     } || logerr "Cloning failed skipping..."
 
-    sudo pacman -Sy i3-wm picom dunst polybar xss-lock xfce4-power-manager mpd feh i3lock rofi alacritty conky uthash meson base-devel cmake ninja python-pywal picom feh -no-confirm
+    sudo pacman -Sy i3-wm picom dunst polybar xss-lock xfce4-power-manager mpd feh rofi alacritty conky uthash meson base-devel cmake ninja python-pywal picom feh --noconfirm
 
     [ -f /bin/yay ] && yay -S light xfce-polkit || logerr "Failed to install from yay"
     sudo pacman -S networkmanager-dmenu-git || logerr "Failed to install networkmanager-dmenu-git, please do it mannually"
@@ -48,7 +48,6 @@ if [ ! -f /bin/networkmanager_dmenu ]; then
     rm -rf networkmanager-dmenu
 fi
 
-
 # making picom always fails do mannually
 # cd /tmp
 # git clone https://github.com/pijulius/picom.git
@@ -59,47 +58,46 @@ fi
 # ninja -C build install
 
 log "Copying files over"
-[ ! -d "$HOME/.config/i3/" ] && mkdir -p $HOME/.config/i3 || {
+[ ! -d "$HOME/.config/i3/" ] && mkdir -p "$HOME/.config/i3" || {
     echo "i3 config found"
-    mv $HOME/.config/i3/ $HOME/.config/i3-backup-$(date "+%a-%T")
+    mv "$HOME"/.config/i3/ "$HOME/.config/i3-backup-$(date "+%a-%T")"
     echo "backup done"
     mkdir -p "$HOME/.config/i3/"
 
 }
-cp -r * "$HOME/.config/i3/"
+cp -r "*" "$HOME/.config/i3/"
 cp -r ./networkmanager_dmenu/ "$HOME/.config/"
-[ ! -d $HOME/.local/share/fonts ] && mkdir -p $HOME/.local/share/fonts
-sudo cp -r $HOME/.config/i3/fonts/* $HOME/.local/share/fonts
+[ ! -d "$HOME"/.local/share/fonts ] && mkdir -p "$HOME"/.local/share/fonts
+sudo cp -r "$HOME"/.config/i3/fonts/* "$HOME"/.local/share/fonts
 fc-cache -fv
 
-[ -f /bin/wal ] && wal -i $HOME/.config/i3/wallpaper.png || logerr "wal failed, Mannual intervention needed"
-[ -f /bin/feh ] && feh $HOME/.config/i3/wallpaper.png --bg-scale || logerr "feh failed, Mannual intervention needed"
+[ -f /bin/wal ] && wal -i "$HOME"/.config/i3/wallpaper.png || logerr "wal failed, Mannual intervention needed"
+[ -f /bin/feh ] && feh "$HOME"/.config/i3/wallpaper.png --bg-scale || logerr "feh failed, Mannual intervention needed"
 
 log "Creating Xinitrc"
-cat <<EOF >$HOME/.xinitrc
+cat "$HOME"/.xinitrc <<EOF
 exec i3
 EOF
 
 log "fixing light"
-sudo usermod -aG video $USER
+sudo usermod -aG video "$USER"
 
 log "Laptop touchpad fix"
 xorg_touch_file="50-libinput.conf"
 [ -f /etc/X11/xorg.conf.d/${xorg_touch_file} ] && xorg_touch_file="231-libinput.conf"
-sudo cat <<EOF >/etc/X11/xorg.conf.d/$xorg_touch_file
-Section "InputClass"
-        Identifier "libinput touchpad catchall"
-        MatchIsTouchpad "on"
-        MatchDevicePath "/dev/input/event*"
-        Driver "libinput"
-        Option "Tapping" "on"
-EndSection
-EOF
+
+sudo echo "Section \"InputClass\"
+            Identifier \"libinput touchpad catchall\"
+            MatchIsTouchpad \"on\"
+            MatchDevicePath \"/dev/input/event*\"
+            Driver \"libinput\"
+            Option \"Tapping\" \"on\"
+            EndSection" >/etc/X11/xorg.conf.d/$xorg_touch_file
 
 echo "install nvim and vim configs? [y,N]"
-read ans
+read -r ans
 
-if [ $ans = 'Y' ] || [ $ans = 'y' ]; then
+if [ "$ans" = 'Y' ] || [ "$ans" = 'y' ]; then
     [ -f /bin/pacman ] && sudo pacman -S neovim vim || sudo apt install neovim vim
     [ -d ~/.vim ] && mv ~/.vim ~/.vim-$(date "+%a-%T")
     [ -d ~/.config/nvim ] && mv ~/.config/nvim ~/.config/nvim-$(date "+%a-%T")

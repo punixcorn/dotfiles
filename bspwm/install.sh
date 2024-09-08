@@ -23,7 +23,7 @@ function pacman() {
         xcb-util-cursor xsettingsd mpc mpd dmenu ncmpcpp python-gobject \
         xfce4-power-manager maim xclip xorg-xbacklight netcat \
         viewnior python-pywal xdg-user-dirs firefox chromium xorg-xrandr python --noconfirm
-    
+
     [ -f /bin/yay ] && yay -S light xfce-polkit || logerr "Failed to install from yay"
     sudo pacman -S networkmanager-dmenu-git || logerr "Failed to install networkmanager-dmenu-git, please do it mannually"
 }
@@ -31,9 +31,8 @@ function pacman() {
 function debain() {
     sudo apt update
     sudo apt install bspwm sxhkd rofi polybar alacritty dunst feh \
-        xsettingsd mpc mpd dmenu ncmpcpp alsa-utils network-manager network-manager-dev\
-        xfce4-power-manager maim xclip light netcat-openbsd xss-lock picom xbacklight \
-        viewnior xdg-user-dirs firefox-esr chromium  python3 -y
+        xsettingsd mpc mpd dmenu ncmpcpp alsa-utils network-manager network-manager-dev xfce4-power-manager maim xclip light netcat-openbsd xss-lock picom xbacklight \
+        viewnior xdg-user-dirs firefox-esr chromium python3 -y
 
     python -m pip install --upgrade gobject pywal
 }
@@ -78,30 +77,29 @@ sudo usermod -aG video $USER
 log "Laptop touchpad fix"
 xorg_touch_file="50-libinput.conf"
 [ -f /etc/X11/xorg.conf.d/${xorg_touch_file} ] && xorg_touch_file="231-libinput.conf"
-sudo cat <<EOF >/etc/X11/xorg.conf.d/$xorg_touch_file
-Section "InputClass"
-        Identifier "libinput touchpad catchall"
-        MatchIsTouchpad "on"
-        MatchDevicePath "/dev/input/event*"
-        Driver "libinput"
-        Option "Tapping" "on"
-EndSection
+sudo echo "Section \"InputClass\"
+            Identifier \"libinput touchpad catchall\"
+            MatchIsTouchpad \"on\"
+            MatchDevicePath \"/dev/input/event*\"
+            Driver \"libinput\"
+            Option \"Tapping\" \"on\"
+            EndSection" >/etc/X11/xorg.conf.d/$xorg_touch_file
+
 EOF
 
-if [ $ans = 'Y' ] || [ $ans = 'y' ];then 
-    [ -f /bin/pacman ] && sudo pacman -S neovim vim || sudo apt install neovim vim 
+if [ $ans = 'Y' ] || [ $ans = 'y' ]; then
+    [ -f /bin/pacman ] && sudo pacman -S neovim vim || sudo apt install neovim vim
     [ -d ~/.vim ] && mv ~/.vim ~/.vim-$(date "+%a-%T")
     [ -d ~/.config/nvim ] && mv ~/.config/nvim ~/.config/nvim-$(date "+%a-%T")
 
     log "Installing vim"
-    git clone https://github.com/punixcorn/vim-dots ~/.vim 
+    git clone https://github.com/punixcorn/vim-dots ~/.vim
     chmod +x ~/.vim/install.sh
     bash ~/.vim/install.sh
 
-
     log "Installing neovim"
     git clone https://github.com/punixcorn/nvim-dots ~/.config/nvim
-    chmod +x ~/.config/nvim 
+    chmod +x ~/.config/nvim
     bash ~/.config/nvim/install.sh
 fi
 
