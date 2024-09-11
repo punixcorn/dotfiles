@@ -65,7 +65,7 @@ log "Copying files over"
     mkdir -p "$HOME/.config/i3/"
 
 }
-cp -r "*" "$HOME/.config/i3/"
+cp -r -- * "$HOME/.config/i3/"
 cp -r ./networkmanager_dmenu/ "$HOME/.config/"
 [ ! -d "$HOME"/.local/share/fonts ] && mkdir -p "$HOME"/.local/share/fonts
 sudo cp -r "$HOME"/.config/i3/fonts/* "$HOME"/.local/share/fonts
@@ -86,13 +86,13 @@ log "Laptop touchpad fix"
 xorg_touch_file="50-libinput.conf"
 [ -f /etc/X11/xorg.conf.d/${xorg_touch_file} ] && xorg_touch_file="231-libinput.conf"
 
-sudo echo "Section \"InputClass\"
-            Identifier \"libinput touchpad catchall\"
-            MatchIsTouchpad \"on\"
-            MatchDevicePath \"/dev/input/event*\"
-            Driver \"libinput\"
-            Option \"Tapping\" \"on\"
-            EndSection" >/etc/X11/xorg.conf.d/$xorg_touch_file
+echo "Section \"InputClass\"
+        Identifier \"libinput touchpad catchall\"
+        MatchIsTouchpad \"on\"
+        MatchDevicePath \"/dev/input/event*\"
+        Driver \"libinput\"
+        Option \"Tapping\" \"on\"
+     EndSection" | sudo tee /etc/X11/xorg.conf.d/$xorg_touch_file
 
 echo "install nvim and vim configs? [y,N]"
 read -r ans

@@ -53,7 +53,7 @@ CONFDIR="$HOME/.config/bspwm/"
 
 [ -d $CONFDIR ] && mv $CONFDIR $HOME/.config/bspwm-backup-$(date "+%a-%T")
 [ ! -d $CONFDIR ] && mkdir -p $CONFDIR
-cp -r ** $CONFDIR
+cp -r -- * "$CONFDIR"
 
 [ -d $CONFDIR/others ] && {
     [ ! -d $HOME/.config/networkmanager-dmenu/ ] && mkdir -p $HOME/.config/networkmanager-dmenu
@@ -77,13 +77,13 @@ sudo usermod -aG video $USER
 log "Laptop touchpad fix"
 xorg_touch_file="50-libinput.conf"
 [ -f /etc/X11/xorg.conf.d/${xorg_touch_file} ] && xorg_touch_file="231-libinput.conf"
-sudo echo "Section \"InputClass\"
-            Identifier \"libinput touchpad catchall\"
-            MatchIsTouchpad \"on\"
-            MatchDevicePath \"/dev/input/event*\"
-            Driver \"libinput\"
-            Option \"Tapping\" \"on\"
-            EndSection" >/etc/X11/xorg.conf.d/$xorg_touch_file
+echo "Section \"InputClass\"
+        Identifier \"libinput touchpad catchall\"
+        MatchIsTouchpad \"on\"
+        MatchDevicePath \"/dev/input/event*\"
+        Driver \"libinput\"
+        Option \"Tapping\" \"on\"
+     EndSection" | sudo tee /etc/X11/xorg.conf.d/$xorg_touch_file
 
 EOF
 
