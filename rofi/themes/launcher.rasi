@@ -1,12 +1,3 @@
-/*
- *
- * Author  : Aditya Shakya
- * Mail    : adi1090x@gmail.com
- * Github  : @adi1090x
- * Twitter : @adi1090x
- *
- */
-
 configuration {
 	font:							"Iosevka Nerd Font 10";
     show-icons:                     true;
@@ -28,7 +19,7 @@ window {
 	border:							0px;
 	border-color:					@bg1;
     border-radius:                  0px;
-	width:							300px;
+	width:							700px;
     location:                       center;
     x-offset:                       0;
     y-offset:                       0;
@@ -37,17 +28,9 @@ window {
 prompt {
     enabled: 						true;
 	padding: 						12px 15px 12px 15px;
-	background-color: 				@bg2;
-	text-color: 					@fga;
-}
-
-textbox-prompt-colon {
-	padding: 						10px 15px 10px 15px;
-	font:							"Iosevka Nerd Font 12";
 	background-color: 				@bg1;
 	text-color: 					@fga;
-	expand: false;
-	str: "";
+	font:							"Iosevka Nerd Font 12";
 }
 
 entry {
@@ -64,8 +47,8 @@ entry {
 }
 
 inputbar {
-	children: 						[ textbox-prompt-colon, prompt ];
-    background-color:               @bg2;
+	children: 						[ prompt, entry ];
+    background-color:               @bg3;
     text-color:                     @fg;
     expand:                         false;
 	border:							0px;
@@ -77,8 +60,8 @@ inputbar {
 listview {
     background-color:               @al;
     padding:                        10px 10px 10px 10px;
-    columns:                        1;
-    lines:                          5;
+    columns:                        3;
+    lines:                          8;
     spacing:                        5px;
     cycle:                          true;
     dynamic:                        true;
@@ -100,7 +83,7 @@ element {
     text-color:                     @fg;
     orientation:                    horizontal;
     border-radius:                  0px;
-	padding: 						8px 8px 8px -25px;
+	padding: 						8px;
 }
 
 element-icon {

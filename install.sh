@@ -132,10 +132,10 @@ fi
 
 log "Installing network Manager"
 if [ ! -f /bin/networkmanager_dmenu ]; then
-    git clone https://github.com/firecat53/networkmanager-dmenu.git
-    chmod +x networkmanager-dmenu/networkmanager_dmenu
-    sudo cp networkmanager-dmenu/networkmanager_dmenu /usr/bin/
-    rm -rf networkmanager-dmenu
+    git clone https://github.com/firecat53/networkmanager-dmenu.git networkmanagerdmenu
+    chmod +x networkmanagerdmenu/networkmanager_dmenu
+    sudo cp networkmanagerdmenu/networkmanager_dmenu /usr/bin/
+    rm -rf networkmanagerdmenu
 fi
 
 # making picom always fails do mannually
@@ -229,6 +229,7 @@ export DEFAULT_ADAPTER=\$(ls -1 /sys/class/power_supply | awk '{ print \$1 }' | 
 
 log "Running Theme for colors"
 . ~/.config/bin/applyTheme 1 &
+disown
 
 # install zsh now because it will load into zsh shell after installation
 install_zsh

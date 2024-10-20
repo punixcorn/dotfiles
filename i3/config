@@ -57,13 +57,13 @@ bindsym $mod+Control+t          exec --no-startup-id ~/.config/bin/toggletouchpa
 
 # -- Rofi --
 
-bindsym $mod+d  				exec --no-startup-id "~/.config/rofi/menu/launcher 1"
+bindsym $mod+d  				exec --no-startup-id "~/.config/rofi/bin/launcher"
 bindsym $mod+n 					exec --no-startup-id networkmanager_dmenu
 bindsym $mod+x 					exec --no-startup-id "~/.config/rofi/bin/powermenu"
 bindsym $mod+m 					exec --no-startup-id "~/.config/rofi/bin/mpd"
 bindsym $mod+s 					exec --no-startup-id "~/.config/rofi/bin/screenshot" 
-bindsym $mod+Shift+t            exec --no-startup-id "~/.config/rofi/pickTheme/launcher"
-bindsym $mod+t                 exec --no-startup-id  "~/.config/rofi/todo/launcher"
+bindsym $mod+Shift+t            exec --no-startup-id "~/.config/rofi/bin/theme_selector"
+bindsym $mod+t                 exec --no-startup-id  "~/.config/rofi/bin/todo_launcher"
 # -- Function keys --
 
 bindsym XF86MonBrightnessUp 	exec --no-startup-id "~/.config/bin/brightness --inc"

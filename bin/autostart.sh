@@ -21,7 +21,7 @@ xsetroot -cursor_name left_ptr 2>/dev/null
 [ -f /bin/feh ] && [ -d "$HOME/.config/wallpaper" ] && feh --bg-scale ~/.config/wallpaper/wallpaper.png >/dev/null 2>&1 &
 
 # Lauch polybar
-[ -f /bin/polybar ] && polybar -c ~/.config/polybar/polybar.ini >/dev/null 2>&1 &
+[ -f /bin/polybar ] && polybar -c ~/.config/polybar/config.ini >/dev/null 2>&1 &
 disown
 
 # Lauch notification daemon

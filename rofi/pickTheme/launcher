@@ -1,3 +1,0 @@
-#!/bin/bash
-# add your wallpaper to ~/.config/wallpaper/ it will automatically show
-rofi -modi Theme:$HOME/.config/bin/setRofiTheme -theme ~/.config/rofi/network/network.rasi -show Theme

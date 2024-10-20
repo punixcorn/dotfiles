@@ -86,23 +86,56 @@ getcolors() {
     ALTMAGENTA="$color13"
     ALTCYAN="$color14"
     ALTWHITE="$color15"
+    BG=$(printf "%s\n" "$background")
+    FG=$(printf "%s\n" "$color0")
+    FGA=$(printf "%s\n" "$color7")
+    SH1=$(printf "%s\n" "$color1")
+    SH2=$(printf "%s\n" "$color2")
+    SH3=$(printf "%s\n" "$color1")
+    SH4=$(printf "%s\n" "$color2")
+    SH5=$(printf "%s\n" "$color1")
+    SH6=$(printf "%s\n" "$color2")
+    SH7=$(printf "%s\n" "$color1")
+    SH8=$(printf "%s\n" "$color2")
 }
 
 ### Write polybar colors file with current theme colors
-function polybarTheme() {
+function polybar_and_rofi() {
     echo "Applying colors to polybar"
-    [ ! -f "$DIR/polybar/colors.ini" ] && touch "$DIR/polybar/colors.ini"
-    cat <<EOF >$DIR/polybar/colors.ini
-    [color]
-    foreground =    ${FOREGROUND}
-    background =    ${BACKGROUND}
-    primary =       ${CURSOR}
 
-    workcolor =     ${FOREGROUND}
-    red =           ${RED}
-    green =         ${GREEN}
-    yellow =        ${YELLOW}
-EOF
+    # Color files
+    PFILE="$HOME/.config/polybar/colors.ini"
+    RFILE="$HOME/.config/rofi/themes/colors.rasi"
+    WFILE="$HOME/.cache/wal/colors.sh"
+
+    # polybar
+    sed -i -e "s/background = #.*/background = $BG/g" $PFILE
+    sed -i -e "s/foreground = #.*/foreground = $FG/g" $PFILE
+    sed -i -e "s/foreground-alt = #.*/foreground-alt = $FGA/g" $PFILE
+    sed -i -e "s/shade1 = #.*/shade1 = $SH1/g" $PFILE
+    sed -i -e "s/shade2 = #.*/shade2 = $SH2/g" $PFILE
+    sed -i -e "s/shade3 = #.*/shade3 = $SH3/g" $PFILE
+    sed -i -e "s/shade4 = #.*/shade4 = $SH4/g" $PFILE
+    sed -i -e "s/shade5 = #.*/shade5 = $SH5/g" $PFILE
+    sed -i -e "s/shade6 = #.*/shade6 = $SH6/g" $PFILE
+    sed -i -e "s/shade7 = #.*/shade7 = $SH7/g" $PFILE
+    sed -i -e "s/shade8 = #.*/shade8 = $SH8/g" $PFILE
+
+    # rofi
+    cat >$RFILE <<-EOF
+	/* colors */
+
+	* {
+	  al:    #00000000;
+	  bg:    ${BG}FF;
+	  bg1:   ${SH8}FF;
+	  bg2:   ${SH7}FF;
+	  bg3:   ${SH6}FF;
+	  fg:    ${FGA}FF;
+	}
+	EOF
+
+    polybar-msg cmd restart
 }
 
 ### Write i3colors
@@ -158,22 +191,6 @@ function kittyTheme() {
     [ -f ~/.cache/wal/colors-kitty.conf ] && cp ~/.cache/wal/colors-kitty.conf ../kitty/color.conf
 }
 
-### Write rofi colors.rasi file with current theme colors
-function rofiTheme() {
-    echo -e "Applying colors to rofi"
-    [ ! -f "$DIR"/rofi/dependencies/colors.rasi ] && touch "$DIR"/rofi/dependencies/colors.rasi
-    cat <<EOF >"$DIR"/rofi/dependencies/colors.rasi
-    * {
-        background:         ${BACKGROUND};
-        background-alt:     ${CURSOR};
-        foreground:         ${FOREGROUND};
-        selected:           ${BLUE};
-        active:             ${YELLOW};
-        urgent:             ${RED};
-    }
-EOF
-}
-
 ### Write dunstrc file with current theme colors
 dunstTheme() {
     echo -e "Applying colors to dunst"
@@ -226,9 +243,8 @@ EOF
 main() {
     getcolors
     i3Theme
-    polybarTheme
+    polybar_and_rofi
     alacrittyTheme
-    rofiTheme
     dunstTheme
     #kittyTheme
     firefoxTheme

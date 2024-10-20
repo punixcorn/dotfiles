@@ -47,7 +47,7 @@ textbox-prompt-colon {
 	background-color: 				@bg1;
 	text-color: 					@fga;
 	expand: false;
-	str: "";
+	str: "";
 }
 
 entry {
@@ -57,14 +57,14 @@ entry {
     expand:                         true;
     horizontal-align:               0;
     placeholder:                    "Search...";
-	padding: 						15px 0px 0px 15px;
+	padding: 						10px 15px 10px 15px;
     margin:                         0px 250px 0px 0px;
     border-radius:                  0px 50px 50px 0px;
     blink:                          true;
 }
 
 inputbar {
-	children: 						[ textbox-prompt-colon, prompt ];
+	children: 						[ textbox-prompt-colon, entry ];
     background-color:               @bg2;
     text-color:                     @fg;
     expand:                         false;

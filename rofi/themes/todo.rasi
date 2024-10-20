@@ -31,7 +31,7 @@ window {
     border-radius:               8px;
     border-color:                black;
     cursor:                      "default";
-    background-image:            url("~/.config/rofi/todo/paper.png", none);
+    background-image:            url("~/.config/rofi/themes/paper.png", none);
 }
 
 /*****----- Main Box -----*****/

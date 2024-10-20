@@ -12,14 +12,14 @@ file="Screenshot_${time}_${geometry}.png"
 
 # Commands
 notify_cmd_shot="dunstify -u low --replace=699 -i /usr/share/archcraft/icons/dunst/picture.png"
-rofi_command="rofi -theme $DIR/rofi/themes/screenshot.rasi"
+rofi_command="rofi -no-config -theme $DIR/rofi/themes/styles.rasi"
 
 # Buttons
-screen=""
-area=""
-window=""
-infive=""
-inten=""
+screen=" Take Whole Screen"
+area=" Take Area"
+window=" Take Window"
+infive=" Take in 5 Secs"
+inten=" Take in 10 Secs"
 
 # notify and view screenshot
 notify_view() {
