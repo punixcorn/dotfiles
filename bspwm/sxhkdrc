@@ -24,10 +24,8 @@ super + shift + Return
 
 # Rofi App Launcher(c)
 super + d
-  sh ~/.config/rofi/menu/launcher 1 >>~/log.txt
+  sh ~/.config/rofi/bin/launcher >>~/log.txt
 
-super + shift + d
-  sh ~/.config/rofi/menu/launcher 2 >>~/log.txt
   
 # Rofi Network Menu(c)
 super + n
@@ -37,11 +35,11 @@ super + w
     firefox >> ~/log.txt
 
 super + t 
-    sh ~/.config/rofi/todo/launcher >>~/log.txt
+    sh ~/.config/rofi/bin/todo_launcher >>~/log.txt
 
 
 super + shift + t 
-    sh ~/.config/rofi/theme/launcher >>~/log.txt
+    sh ~/.config/rofi/bin/theme_selector >>~/log.txt
 
 ##---------- Applications ----------##
 
@@ -51,7 +49,7 @@ super + shift + {w,e,q,a,z,x}
 
 # Terminal Apps
 super + shift + r
-	alacritty --config-file ~/.config/alacritty/alacritty.yml -e ranger
+	alacritty --config-file ~/.config/alacritty/alacritty.toml -e ranger
 
 # Color Picker
 #super + p

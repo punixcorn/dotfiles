@@ -227,9 +227,9 @@ export DEFAULT_BATTERY=\$(ls -1 /sys/class/power_supply | awk '{ print \$1 }' | 
 export DEFAULT_ADAPTER=\$(ls -1 /sys/class/power_supply | awk '{ print \$1 }' | grep ADP)
 !
 
-log "Running Theme for colors"
-. ~/.config/bin/applyTheme 1 &
-disown
+#log "Running Theme for colors"
+#. ~/.config/bin/applyTheme 1 &
+#disown
 
 # install zsh now because it will load into zsh shell after installation
 install_zsh
