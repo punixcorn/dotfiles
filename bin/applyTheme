@@ -1,0 +1,238 @@
+#!/bin/bash
+
+if [ "$1" == "--help" ] || [ "$1" == "-h" ]; then
+    echo -e "./applyTheme < number | nothing >"
+    echo -e "put number 1 to regen wal"
+    echo -e "no number , no regen"
+fi
+
+# will use python module or wal binary
+walbinary=""
+[ -f /usr/bin/wal ] && walbinary="wal " || walbinary="python3 -m pywal "
+
+# using wal backend
+[ ! -f ~/backend ] && echo "wal" >~/.backend
+override=$1               # means must regen wal even if it is gened
+walToggle=0               # means must regen wal if alreay gened, no need
+backend=$(cat ~/.backend) # the backend to use
+DIR="$HOME/.config"
+DIR_I3="$HOME/.config/i3/"
+DIR_BSPWM="$HOME/.config/bspwm/"
+wallpaperdir="$HOME/.config/wallpaper/wallpaper.png"
+
+## -_-_-_-_-_-_-_-_-_ Source wal colors -_-_-_-_-_-_-_-_-_ ##
+
+### source the color wal generated
+function sourcewal() {
+    echo -e "Applying Theme"
+    [ -f "$HOME/.cache/wal/colors.sh" ] && source "$HOME/.cache/wal/colors.sh" || walToggle=1
+}
+
+### getting the theme colors
+sourcewal
+
+### checks
+if [ $walToggle -eq 1 ] || [ ! -z "$override" ]; then
+    # looking for wallpaper
+    if [ ! -f "$wallpaperdir" ]; then
+        wallpaperdir="$DIR/wallpaper.png"
+        if [ -f $wallpaperdir ]; then
+            echo "wallpaper found"
+        else
+            echo "wallpaper not found"
+            echo "$DIR/wallpaper.png"
+            exit 1
+        fi
+    fi
+
+    $walbinary -c || {
+        echo "pywal not found, use pip install pywal or your packagemanager"
+        exit 1
+    }
+
+    echo -e "Setting wallpaper..."
+    cp "$wallpaperdir" "$HOME/.wallpaper.png" >>~/log.txt 2>&1
+
+    echo "running pywall on wallpaper"
+    [ "$backend" = "" ] && backend="wal"
+    $walbinary -i "$wallpaperdir" --backend "$backend" >>~/log.txt 2>&1 || {
+        echo "wallpaper or backend not found using default: wal"
+        echo "wal" >~/.backend && backend="wal"
+        $walbinary -i "$wallpaperdir" --backend "$backend" >>~/log.txt 2>&1
+    }
+    echo -e "Generating Theme..."
+    sourcewal
+fi
+
+## -_-_-_-_-_-_-_-_-_ Assign Colors -_-_-_-_-_-_-_-_-_ ##
+
+getcolors() {
+    FOREGROUND="$foreground"
+    BACKGROUND="$background"
+    CURSOR="$cursor"
+    BLACK="$color0"
+    RED="$color1"
+    GREEN="$color2"
+    YELLOW="$color3"
+    BLUE="$color4"
+    MAGENTA="$color5"
+    CYAN="$color6"
+    WHITE="$color7"
+    ALTBLACK="$color8"
+    ALTRED="$color9"
+    ALTGREEN="$color10"
+    ALTYELLOW="$color11"
+    ALTBLUE="$color12"
+    ALTMAGENTA="$color13"
+    ALTCYAN="$color14"
+    ALTWHITE="$color15"
+}
+
+### Write polybar colors file with current theme colors
+function polybarTheme() {
+    echo "Applying colors to polybar"
+    [ ! -f "$DIR/polybar/colors.ini" ] && touch "$DIR/polybar/colors.ini"
+    cat <<EOF >$DIR/polybar/colors.ini
+    [color]
+    foreground =    ${FOREGROUND}
+    background =    ${BACKGROUND}
+    primary =       ${CURSOR}
+
+    workcolor =     ${FOREGROUND}
+    red =           ${RED}
+    green =         ${GREEN}
+    yellow =        ${YELLOW}
+EOF
+}
+
+### Write i3colors
+i3Theme() {
+    echo "Applying colors to i3"
+    [ ! -f "$DIR_I3/i3colors" ] && touch "$DIR_I3/i3colors"
+    cat <<EOF >$DIR_I3/i3colors
+    # class                 border  backgr. text    indicator child_border
+    client.focused          ${FOREGROUND} ${FOREGROUND} ${MAGENTA} ${RED}   ${FOREGROUND}
+    client.focused_inactive ${BACKGROUND} ${BACKGROUND} ${BACKGROUND} ${RED}   ${BACKGROUND}
+    client.unfocused        ${BACKGROUND} ${BACKGROUND} ${MAGENTA} ${RED}   ${BACKGROUND}
+    client.urgent           ${GREEN} ${GREEN} ${MAGENTA} ${RED}   ${GREEN}
+    client.placeholder      ${BACKGROUND} ${BACKGROUND} ${MAGENTA} ${RED}   ${BACKGROUND}
+    client.background       ${BACKGROUND}
+EOF
+    i3-msg -t command reload
+}
+
+### Write alacritty colors.yml file with current theme colors
+function alacrittyTheme() {
+    echo -e "Applying colors to Alacritty"
+    [ ! -f "$DIR/alacritty/colors.toml" ] && touch "$DIR/alacritty/colors.toml"
+    cat <<EOF >$DIR/alacritty/colors.toml
+    [colors.bright]
+    black = "${ALTBLACK}"
+    blue = "${ALTBLUE}"
+    cyan = "${ALTCYAN}"
+    green = "${ALTGREEN}"
+    magenta = "${ALTMAGENTA}"
+    red = "${ALTRED}"
+    white = "${ALTWHITE}"
+    yellow = "${ALTYELLOW}"
+
+    [colors.normal]
+    black = "${ALTBLACK}"
+    blue = "${ALTBLUE}"
+    cyan = "${ALTCYAN}"
+    green = "${ALTGREEN}"
+    magenta = "${ALTMAGENTA}"
+    red = "${ALTRED}"
+    white = "${ALTWHITE}"
+    yellow = "${ALTYELLOW}"
+
+    [colors.primary]
+    background = "${BACKGROUND}"
+    foreground = "${FOREGROUND}"
+EOF
+}
+
+### kitty-Theme
+function kittyTheme() {
+    echo -e "Applying colors to Kitty"
+    [ -f ~/.cache/wal/colors-kitty.conf ] && cp ~/.cache/wal/colors-kitty.conf ../kitty/color.conf
+}
+
+### Write rofi colors.rasi file with current theme colors
+function rofiTheme() {
+    echo -e "Applying colors to rofi"
+    [ ! -f "$DIR"/rofi/dependencies/colors.rasi ] && touch "$DIR"/rofi/dependencies/colors.rasi
+    cat <<EOF >"$DIR"/rofi/dependencies/colors.rasi
+    * {
+        background:         ${BACKGROUND};
+        background-alt:     ${CURSOR};
+        foreground:         ${FOREGROUND};
+        selected:           ${BLUE};
+        active:             ${YELLOW};
+        urgent:             ${RED};
+    }
+EOF
+}
+
+### Write dunstrc file with current theme colors
+dunstTheme() {
+    echo -e "Applying colors to dunst"
+    sed -i '/urgency_low/Q' "$DIR"/dunstrc
+    cat <<EOF >>"$DIR"/dunst/dunstrc
+    [urgency_low]
+    timeout = 3
+    background =   "${BACKGROUND}"
+    foreground =   "${FOREGROUND}"
+    frame_color =  "${BLUE}"
+
+    [urgency_normal]
+    timeout = 5
+    background =   "${BACKGROUND}"
+    foreground =   "${FOREGROUND}"
+    frame_color =  "${BLUE}"
+
+    [urgency_critical]
+    timeout = 0
+    background =   "${BACKGROUND}"
+    foreground =   "${FOREGROUND}"
+    frame_color =  "${RED}"
+EOF
+}
+
+### firefox-pywal
+firefoxTheme() {
+    echo -e "Applying colors to Firefox"
+    [ -f /bin/firefox ] && [ -f /bin/pywalfox ] && [ -f /bin/wal ] && pywalfox install >/dev/null 2>&1 || echo -e "firefox pywal failed or not found\n"
+}
+
+function networkmanger() {
+    echo -e "Applying colors to networkmanager"
+    if [ ! -f ~/.config/networkmanager-dmenu/config.ini ]; then
+        echo -r "Could not find Networkmanager-dmenu"
+        return
+    fi
+    cat <<EOF >~/.config/networkmanager-dmenu/config.ini
+[dmenu]
+dmenu_command = rofi -rofi_highlight=True -l 10 -dmenu -theme ~/.config/rofi/network/network.rasi
+# Note that dmenu_command can contain arguments as well like \$(rofi -width 30)
+# m = number of monitor to display on
+[editor]
+terminal = alacritty
+gui_if_available = True
+EOF
+}
+
+### Execute functions and run main
+main() {
+    getcolors
+    i3Theme
+    polybarTheme
+    alacrittyTheme
+    rofiTheme
+    dunstTheme
+    #kittyTheme
+    firefoxTheme
+    networkmanger
+}
+
+main

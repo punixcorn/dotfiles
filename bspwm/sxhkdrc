@@ -1,0 +1,214 @@
+#---------- Keybindings for bspwm ----------##
+
+# Terminal (alacritty)
+super + Return
+    bspterm 
+
+# Terminal (floating)
+super + shift + Return
+  bspterm --float
+
+##---------- Toggle polybar ----------##
+#super + o
+#    polybar-msg cmd hide
+#
+#super + shift + o
+#    bspc config -m focused top_padding $((`bspc config -m focused top_padding` + 26 ))
+#super + x
+#     polybar-msg cmd hide; bspc config -m focused top_padding $((`bspc config -m focused top_padding` - 26 ));
+#
+#super + shift + x
+#    polybar-msg cmd show
+
+##---------- Rofi Launcher & Menus ----------##
+
+# Rofi App Launcher(c)
+super + d
+  sh ~/.config/rofi/menu/launcher 1 >>~/log.txt
+
+super + shift + d
+  sh ~/.config/rofi/menu/launcher 2 >>~/log.txt
+  
+# Rofi Network Menu(c)
+super + n
+	networkmanager_dmenu
+
+super + w 
+    firefox >> ~/log.txt
+
+super + t 
+    sh ~/.config/rofi/todo/launcher >>~/log.txt
+
+
+super + shift + t 
+    sh ~/.config/rofi/theme/launcher >>~/log.txt
+
+##---------- Applications ----------##
+
+# Launch Apps
+super + shift + {w,e,q,a,z,x}
+	{firefox-developer-edition >>~/log.txt,virt-manager >>~/log.txt,whatsapp-for-linux >>~/log.txt,telegram-desktop >> ~/log.txt,discord >>~/log.txt,signal-desktop-beta >> ~/.log.txt}
+
+# Terminal Apps
+super + shift + r
+	alacritty --config-file ~/.config/alacritty/alacritty.yml -e ranger
+
+# Color Picker
+#super + p
+#	color-gpick
+
+# Lockscreen
+ctrl + alt + l
+    betterlockscreen --lock
+
+##---------- Mpd ----------##
+super + p 
+    mpc toggle
+
+super + s
+    mpc stop 
+
+super + {comma,period}
+   mpc seek {-20, +20}
+
+super + shift + {comma,period}
+   mpc {prev,next}
+
+super + {equal,minus}
+   sh ~/.config/bin/volume{ --inc, --dec}
+
+super + m
+   sh ~/.config/bin/volume --toggle
+
+##---------- System Keys ----------##
+
+# Take a screenshot
+Print
+	sh ~/.config/bin/takeshot --now
+	
+# Take screenshot in 5 second
+alt + Print	
+	sh ~/.config/bin/takeshot --in5
+
+# Take screenshot in 10 second
+shift + Print	
+	sh ~/.config/bin/takeshot --in10
+
+# Take screenshot of active window
+ctrl + Print
+    sh ~/.config/bin/takeshot --win
+
+# Take screenshot of area
+ctrl + alt + Print
+    sh ~/.config/bin/takeshot --area
+
+# Brighness control
+XF86MonBrightness{Up,Down}
+	sh ~/.config/bin/brightness{ --inc, --dec}
+	
+# Volume control
+XF86Audio{RaiseVolume,LowerVolume}
+	sh ~/.config/bin/volume{ --inc, --dec}
+
+XF86AudioMute
+	sh ~/.config/bin/volume --toggle
+
+XF86AudioMicMute
+	sh ~/.config/bin/volume --toggle-mic
+	
+# Music control
+XF86Audio{Next,Prev,Play,Stop}
+	mpc {next,prev,toggle,stop}
+
+##---------- Bspwm ----------##
+
+# Close App
+super + {_,shift + }c
+	bspc node -{c,k}
+
+#asd
+super + y
+    rofi -show emoji
+
+# Reload Keybindings
+super + Escape
+	pkill -USR1 -x sxhkd
+
+# kill window
+ctrl + alt + Escape
+    xkill
+
+# Quit/Restart bspwm
+ctrl + shift + {q,r}
+	bspc {quit,wm -r}
+	
+# Split horizontal, vertical or cancel
+super + {bracketleft,bracketright,apostrophe,semicolon,q}
+	bspc node -p {west,east,south,north,cancel}
+
+# Preselect the ratio
+super + ctrl + {1-9}
+	bspc node -o 0.{1-9}
+
+# Fullscreen or Monocle
+super + f
+#	bspc desktop -l next
+    bspc node -t "~"fullscreen
+
+# Toggle beetwen floating & tiled
+super + space
+    bspc node -t "~"{floating,tiled}
+
+# Pseudo Tiled & tiled mode
+super + shift + space
+#super + {p,t}
+    bspc node -t "~"{pseudo_tiled,tiled}
+
+# Set the node flags
+super + ctrl + {m,x,y,z}
+	bspc node -g {marked,locked,sticky,private}
+
+# Send the window to another edge of the screen
+super + {_,shift + }{Left,Down,Up,Right}
+	bspc node -{f,s} {west,south,north,east}
+
+# change focus to next window, including floating window
+alt + {_,shift + }tab
+	bspc node -f {next.local,prev.local}
+
+# change focus to close by windows
+super + {h,j,k,l}
+	bspc node -f {west,south,north,east}
+
+# Switch workspace
+ctrl + alt + {Left,Right}
+	bspc desktop -f {prev.local,next.local}
+
+# Switch to last opened workspace
+super + {Tab,grave}
+	bspc {node,desktop} -f last
+
+# Send focused window to another workspace
+super + {_,shift + }{1-9,0}
+	bspc {desktop -f,node -d} '^{1-9,10}'
+
+# Expanding windows
+super + control + {Left,Right,Up,Down}
+	bspc node -z {left -20 0,right 20 0,top 0 -20,bottom 0 20}
+	
+## Shrinking windows
+super + alt + {Left,Right,Up,Down}
+	bspc node -z {left 20 0,right -20 0,top 0 20,bottom 0 -20}
+
+##Shrinking and Expanding windows horizontal 
+super + shift + {j,k}
+	bspc node -z {left -20 0,left 20 0}
+	
+## Move floating windows
+alt + shift + {Left,Down,Up,Right}
+	bspc node -v {-20 0,0 20,0 -20,20 0}
+
+# Hide/Unhide Window
+super + shift + i
+	winmask		
+##---------- EOF ----------##

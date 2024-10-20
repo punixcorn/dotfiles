@@ -1,0 +1,179 @@
+#!/bin/bash
+#
+#  ██████╗ ███████╗██████╗ ██╗    ██╗███╗   ███╗██████╗  ██████╗
+#  ██╔══██╗██╔════╝██╔══██╗██║    ██║████╗ ████║██╔══██╗██╔════╝
+#  ██████╔╝███████╗██████╔╝██║ █╗ ██║██╔████╔██║██████╔╝██║
+#  ██╔══██╗╚════██║██╔═══╝ ██║███╗██║██║╚██╔╝██║██╔══██╗██║
+#  ██████╔╝███████║██║     ╚███╔███╔╝██║ ╚═╝ ██║██║  ██║╚██████╗
+#  ╚═════╝ ╚══════╝╚═╝      ╚══╝╚══╝ ╚═╝     ╚═╝╚═╝  ╚═╝ ╚═════╝
+
+## Bspwm config directory
+BSPDIR="$HOME/.config/bspwm"
+
+## Get theme color
+#source "$BSPDIR/bin/bspTheme"
+
+## Export bspwm/bin dir to PATH
+export PATH="${PATH}:$HOME/.config/bin"
+
+## Run java applications without issues
+export _JAVA_AWT_WM_NONREPARENTING=1
+
+## Polybar env varibales
+export DEFAULT_NETWORK_INTERFACE=$(ip route | grep '^default' | awk '{print $5}' | head -n1)
+export DEFAULT_BATTERY=$(ls -1 /sys/class/power_supply | awk '{ print $1 }' | grep BAT)
+export DEFAULT_ADAPTER=$(ls -1 /sys/class/power_supply | awk '{ print $1 }' | grep ADP)
+
+## Bspwm appearance
+CURRENT_BORDER='1'
+CURRENT_GAP='5'
+CURRENT_SRATIO='0.50'
+
+## Configurations --------------------------------------------#
+
+## Manager Workspaces
+workspaces() {
+    name=1
+    for monitor in $(bspc query -M); do
+        bspc monitor ${monitor} -n "$name" -d '1' '2' '3' '4' '5' # '6' '7' '8'
+        # bspc monitor ${monitor} -n "$name" -d '' '' '' '' '' '' '' ''
+        let name++
+    done
+}
+workspaces
+
+## Apply bspwm configurations
+bspc config border_width "$CURRENT_BORDER"
+bspc config window_gap "$CURRENT_GAP"
+bspc config split_ratio "$CURRENT_SRATIO"
+
+bspc config focused_border_color "$BLUE"
+bspc config normal_border_color "$BACKGROUND"
+bspc config active_border_color "$BLUE"
+bspc config presel_feedback_color "$GREEN"
+
+bspc config borderless_monocle true
+bspc config gapless_monocle true
+bspc config paddingless_monocle true
+bspc config single_monocle false
+bspc config focus_follows_pointer true
+
+## Manage all the unmanaged windows remaining from a previous session.
+bspc wm --adopt-orphans
+
+## Window rules ----------------------------------------------#
+
+#remove all rules first
+bspc rule -r *:*
+
+## 1 > terminal (always open terminal on workspace-1)
+bspc rule -a Alacritty desktop='^1' follow=on focus=on
+bspc rule -a Xfce4-terminal desktop='^1' follow=on focus=on
+
+## 2 > web (always open web browser on workspace-2)
+bspc rule -a firefox desktop='^2' follow=on focus=on
+bspc rule -a chromium desktop='^2' follow=on focus=on
+
+## 3 > files (always open file manager on workspace-3)
+declare -a files=(Pcmanfm Thunar qBittorrent)
+for i in ${files[@]}; do
+    bspc rule -a $i desktop='^3' follow=on focus=on
+done
+
+## 4 > code (always open editors on workspace-4)
+declare -a code=(Geany code-oss)
+for i in ${code[@]}; do
+    bspc rule -a $i desktop='^4' follow=on focus=on
+done
+
+## 5 > office and docs (always open office/doc apps on workspace-5)
+declare -a office=(Gucharmap Atril Evince
+    libreoffice-writer libreoffice-calc libreoffice-impress
+    libreoffice-startcenter libreoffice Soffice *:libreofficedev *:soffice)
+for i in ${office[@]}; do
+    bspc rule -a $i desktop='^5' follow=on focus=on
+done
+
+## 6 > communication (always open communication apps on workspace-6)
+declare -a comm=(Thunderbird TelegramDesktop Hexchat)
+for i in ${comm[@]}; do
+    bspc rule -a $i desktop='^6' follow=on focus=on
+done
+
+## 7 > media (always open media apps on workspace-7)
+declare -a media=(Audacity Music MPlayer Lxmusic Inkscape Gimp-2.10 obs)
+for i in ${media[@]}; do
+    bspc rule -a $i desktop='^7' state=floating follow=on focus=on
+done
+
+## 8 > system (always open system apps on workspace-8)
+bspc rule -a 'VirtualBox Manager' desktop='^8' follow=on focus=on
+bspc rule -a GParted desktop='^8' follow=on focus=on
+declare -a settings=(Lxappearance Lxtask Lxrandr Arandr
+    System-config-printer.py Pavucontrol Exo-helper-1
+    Xfce4-power-manager-settings)
+for i in ${settings[@]}; do
+    bspc rule -a $i desktop='^8' state=floating follow=on focus=on
+done
+
+# remove all rules
+bspc rule -r *:*
+
+## Always Floating Apps
+declare -a floating=(alacritty-float Pcmanfm Thunar Onboard Yad 'Firefox:Places'
+    Viewnior feh Nm-connection-editor 'Xtreme Download Manager')
+for i in ${floating[@]}; do
+    bspc rule -a $i state=floating follow=on focus=on
+done
+
+bspc rule -a Conky state=floating manage=off
+bspc rule -a stalonetray state=floating manage=off
+
+## Autostart -------------------------------------------------#
+
+# Kill if already running
+killall -9 xsettingsd sxhkd dunst ksuperkey xfce4-power-manager mpd 2>/dev/null
+
+# Lauch xsettingsd daemon
+[ -f /bin/xsettingsd ] && xsettingsd --config="$BSPDIR"/xsettingsd &
+
+# polkit agent
+if [[ ! $(pidof xfce-polkit) ]]; then
+    [ -f /usr/lib/xfce-polkit/xfce-polkit ] && /usr/lib/xfce-polkit/xfce-polkit &
+fi
+
+# Lauch keybindings daemon
+sxhkd -c "$BSPDIR"/sxhkdrc &
+
+# Enable power management
+[ -f /bin/xfce4-power-manager ] && xfce4-power-manager &
+
+# Fix cursor
+xsetroot -cursor_name left_ptr
+
+# start all services
+[ -f "$HOME/.config/bin" ] && bash "$HOME/.config/bin/autostart.sh" &
+
+#Restore wallpaper
+[ -f "$HOME/.fehbg" ] && ~/.fehbg
+
+#polybar
+# polybar --config="$BSPDIR/polybar/config.ini" & 2>/dev/null
+
+#dunst
+#dunst -config "$BSPDIR/others/dunstrc" & 2>/dev/null
+
+# floating terminal
+bspfloat &
+
+# conky
+#bash "$HOME/.config/conky/start.sh" &
+
+#using jhonarbg picom
+#picom --experimental-backends --opacity-rule "50:class_g='Polybar'" --opacity-rule "80:class_g='Rofi'" --opacity-rule "70:class_g='Discord'" --round-borders 20 --corner-radius 10 &
+
+# if this doesn't work , use
+# picom --conf ~/.config/others/picom.conf --experimental-backends &
+
+# Launch your apps [ create the file and put your apps there ]
+# [ -f "$HOME/.config/bspwm/others/startup.sh" ] && bash ~/.config/bspwm/others/startup.sh &

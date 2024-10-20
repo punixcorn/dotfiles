@@ -1,0 +1,27 @@
+#!/bin/bash
+# add your wallpaper to ~/.config/wallpaper/ it will automatically show
+col1="\e[35m"
+res="\e[0m"
+DIRP="$HOME/.config/wallpaper"
+[ ! -f ~/.backend ] && echo "wal" >~/.backend
+
+echo "colorz backend"
+echo "haishoku backend"
+echo "colorthief backend"
+ls ~/.config/wallpaper/ | grep png | sed s/.png//g
+
+if [ "$1" != "" ]; then
+    if [ "$1" = "colorz backend" ]; then
+        echo $1 | awk '{ print $1 }' >~/.backend
+    elif [ "$1" = "haishoku backend" ]; then
+        echo $1 | awk '{ print $1 }' >~/.backend
+    elif [ "$1" = "colorthief backend" ]; then
+        echo $1 | awk '{ print $1 }' >~/.backend
+    else
+        wallpaper=""
+        [ -f "$DIRP/$1.png" ] && wallpaper="$1.png" || { [ -f "$DIRP/$1.jpg" ] && wallpaper="$1.jpg"; }
+        [ -f "$DIRP/$wallpaper" ] && { cp "$DIRP/$wallpaper" "$DIRP/wallpaper.png" && ~/.config/bin/applyTheme 1 >>~/log.txt 2>&1; } || {
+            echo -e "${col1}[ $DIRP/$wallpaper ] ${res}was not found"
+        }
+    fi
+fi

@@ -1,0 +1,14 @@
+[font]
+size = 5
+
+[font.bold]
+family = "Iosevka"
+
+[font.bold_italic]
+family = "Iosevka"
+
+[font.italic]
+family = "Iosevka"
+
+[font.normal]
+family = "Iosevka"
