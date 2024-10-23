@@ -154,7 +154,7 @@ fi
 log "Making backups..."
 
 config_home="$HOME/.config"
-current_date="$(date \"+%D%T\")"
+current_date="$(date '+%D%T')"
 backup_dir="$config_home/backups_${current_date}"
 
 # if .config doesn't exist theres probably config there, create backup_folder
@@ -188,7 +188,9 @@ for dir in ${dirs[@]}; do
 done
 
 log "Copying files over"
-cp -r -- * ~/.config
+for dir in ${dirs[@]}; do
+    cp -r "$dir" "$config_home"
+done
 
 log "copying fonts"
 if [ ! -d /usr/share/fonts ]; then
@@ -256,6 +258,8 @@ export DEFAULT_NETWORK_INTERFACE=\$(ip route | grep '^default' | awk '{print \$5
 export DEFAULT_BATTERY=\$(ls -1 /sys/class/power_supply | awk '{ print \$1 }' | grep BAT)
 export DEFAULT_ADAPTER=\$(ls -1 /sys/class/power_supply | awk '{ print \$1 }' | grep ADP)
 !
+
+chmod +x ~/.xprofile
 
 #log "Running Theme for colors"
 #. ~/.config/bin/applyTheme 1 &

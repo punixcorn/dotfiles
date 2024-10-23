@@ -1,4 +1,6 @@
+[general]
 import = ["~/.config/alacritty/colors.toml", "~/.config/alacritty/fonts.toml"]
+
 live_config_reload = true
 
 [cursor]
