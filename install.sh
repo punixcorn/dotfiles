@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/b
+else
+in/bash
 
 # install files for i3
 
@@ -241,9 +243,19 @@ export PATH="$PATH:$HOME/.local/bin/"
 wal -i "$HOME"/.config/wallpaper/wallpaper.png || logerr "wal failed, Mannual intervention needed"
 
 log "Creating Xinitrc"
+
+if [ "$wm_ans" = "1" ]; then
+    wm_ans="bspwm"
+else
+    wm_ans="i3"
+fi
+
 tee "$HOME"/.xinitrc <<!
-exec i3
+[ -f /etc/xprofile ] && . /etc/xprofile
+[ -f ~/.xprofile ] && . ~/.xprofile
+exec ${wm_ans}
 !
+else
 
 # fixing xorg
 #log "fixing xorg"
@@ -260,7 +272,6 @@ export DEFAULT_ADAPTER=\$(ls -1 /sys/class/power_supply | awk '{ print \$1 }' | 
 !
 
 chmod +x ~/.xprofile
-
 #log "Running Theme for colors"
 #. ~/.config/bin/applyTheme 1 &
 #disown
