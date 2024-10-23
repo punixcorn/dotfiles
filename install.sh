@@ -68,7 +68,7 @@ function pre_installations() {
     git clone https://github.com/punixcorn/arch-setup
     [ -d arch-setup ] && {
         chmod +x arch-setup/*
-        [ -z "$(grep "choatic" /etc/pacman.conf)" ] && ./arch-setup/install-choatic-aur.sh || echo "choatic available"
+        [ -z "$(grep "chaotic" /etc/pacman.conf)" ] && ./arch-setup/install-choatic-aur.sh || echo "choatic available"
         [ ! -f /bin/yay ] && ./arch-setup/install-yay.sh || echo "yay found"
     } || logerr "Cloning failed skipping..."
 }
