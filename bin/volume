@@ -2,7 +2,11 @@
 
 # Get Volume
 get_volume() {
+
     volume=$(amixer get Master | tail -n1 | awk -F ' ' '{print $5}' | tr -d '[]')
+    if [[ "$volume" =~ ^-?[0-9].*(dB)$ ]]; then
+        volume=$(amixer get Master | tail -n1 | awk -F ' ' '{print $4}' | tr -d '[]')
+    fi
     echo "$volume"
 }
 

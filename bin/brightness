@@ -7,7 +7,8 @@ get_backlight() {
 
 # Notify
 notify_bl() {
-    dunstify -u low --replace=69 "Brightness : $(get_backlight)"
+    LIGHT=$(printf "%.0f\n" $(light -G))
+    dunstify -u low --replace=69 "Brightness : $LIGHT%"
 }
 
 # Increase brightness
