@@ -11,6 +11,10 @@ function log() {
     printf "\e[32m[*]\e[0m %s\n" "$1"
 }
 
+function logwarn() {
+    printf "\e[35m[!]\e[0m %s\n" "$1"
+}
+
 function logerr() {
     printf "\e[33m[-]\e[0m %s\n" "$1"
 }
@@ -80,7 +84,7 @@ function pacman_i3() {
     pre_installations
     sudo pacman -Sy i3-wm picom dunst polybar xss-lock xfce4-power-manager \
         mpd feh rofi alacritty conky uthash meson base-devel cmake ninja \
-        python-pywal picom feh --noconfirm
+        python-pywal picom feh alsa-utils pulseaudio --noconfirm
 
     [ -f /bin/yay ] && yay -S light xfce-polkit || logerr "Failed to install from yay"
 }
@@ -89,10 +93,10 @@ function pacman_bspwm() {
     pre_installations
     sudo pacman -Sy bspwm sxhkd rofi polybar alacritty dunst feh \
         xcb-util-cursor xsettingsd mpc mpd dmenu ncmpcpp python-gobject \
-        xfce4-power-manager maim xclip xorg-xbacklight netcat \
-        viewnior python-pywal xdg-user-dirs firefox chromium xorg-xrandr python --noconfirm
+        xfce4-power-manager maim xclip xorg-xbacklight netcat alsa-utils \
+        viewnior python-pywal xdg-user-dirs firefox chromium xorg-xrandr python pulseaudio --noconfirm
 
-    [ -f /bin/yay ] && yay -S light xfce-polkit || logerr "Failed to install from yay"
+    [ -f /bin/yay ] && yay -S light xfce-polkit || logerr "Failed to install light & xfce-polkit from yay"
 }
 
 function debain_i3() {
@@ -147,25 +151,50 @@ fi
 # ninja -C build
 # ninja -C build install
 
+log "Making backups..."
+
+config_home="$HOME/.config"
+current_date="$(date \"+%D%T\")"
+backup_dir="$config_home/backups_${current_date}"
+
+# if .config doesn't exist theres probably config there, create backup_folder
+if [ ! -d "$config_home" ]; then
+    mkdir -p "$config_home"
+else
+    mkdir -p "$backup_dir"
+fi
+
+dirs=(
+    "alacritty"
+    "bin"
+    "bspwm"
+    "conky"
+    "dunst"
+    "fonts"
+    "i3"
+    "kitty"
+    "networkmanager-dmenu"
+    "picom"
+    "polybar"
+    "rofi"
+    "wallpaper"
+)
+
+# Create a folder to put all the old folders
+for dir in ${dirs[@]}; do
+    if [ -d "$config_home/$dir" ]; then
+        mv "$config_home/$dir" "$backup_dir"
+    fi
+done
+
 log "Copying files over"
-question "I can't check for all the files, do you want to proceed [Y,n]"
-read backup_ans
-
-if [ "$backup_ans" = "N" ] || [ "$backup_ans" = "n" ]; then
-    logerr "Exiting..."
-    exit 0
-fi
-
-if [ ! -d "$HOME/.config" ]; then
-    mkdir -p "$HOME/.config"
-fi
-
 cp -r -- * ~/.config
 
 log "copying fonts"
 if [ ! -d /usr/share/fonts ]; then
     sudo mkdir -p /usr/share/fonts
 fi
+
 sudo cp -r fonts/* /usr/share/fonts/
 fc-cache -fv
 
@@ -215,8 +244,9 @@ exec i3
 !
 
 # fixing xorg
-log "fixing xorg"
-fix_xorg
+#log "fixing xorg"
+#fix_xorg
+logwarn "if you are in vm you will need to run the fix_xorg function after installing and starting xorg"
 
 # setting up variables
 log "Setting up enviroment variables"
