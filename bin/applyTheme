@@ -60,10 +60,10 @@ if [ $walToggle -eq 1 ] || [ ! -z "$override" ]; then
 
     echo "running pywall on wallpaper"
     [ "$backend" = "" ] && backend="wal"
-    $walbinary -i "$wallpaperdir" --backend "$backend" >>~/log.txt 2>&1 || {
+    $walbinary -a 92 -i "$wallpaperdir" --backend "$backend" >>~/log.txt 2>&1 || {
         echo "wallpaper or backend not found using default: wal"
         echo "wal" >~/.backend && backend="wal"
-        $walbinary -i "$wallpaperdir" --backend "$backend" >>~/log.txt 2>&1
+        $walbinary -a 92 -i "$wallpaperdir" --backend "$backend" >>~/log.txt 2>&1
     }
     echo -e "Generating Theme..."
     sourcewal
