@@ -8,7 +8,12 @@ fi
 
 # will use python module or wal binary
 walbinary=""
-[ -f /usr/bin/wal ] && walbinary="wal " || walbinary="python3 -m pywal "
+export PATH="$PATH:$HOME/.local/bin"
+if [[ -f /usr/bin/wal ]]; then
+    walbinary="wal "
+elif [[ -n $(pip list | grep pywal) ]]; then
+    walbinary="python3 -m pywal "
+fi
 
 # using wal backend
 [ ! -f ~/backend ] && echo "wal" >~/.backend
