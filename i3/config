@@ -64,6 +64,7 @@ bindsym $mod+m 					exec --no-startup-id "~/.config/rofi/bin/mpd"
 bindsym $mod+s 					exec --no-startup-id "~/.config/rofi/bin/screenshot" 
 bindsym $mod+Shift+t            exec --no-startup-id "~/.config/rofi/bin/theme_selector"
 bindsym $mod+t                 exec --no-startup-id  "~/.config/rofi/bin/todo_launcher"
+bindsym $mod+t                 exec --no-startup-id  "~/.config/bin/mpc-toggle"
 # -- Function keys --
 
 bindsym XF86MonBrightnessUp 	exec --no-startup-id "~/.config/bin/brightness --inc"

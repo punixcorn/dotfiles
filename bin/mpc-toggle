@@ -1,0 +1,11 @@
+#!/bin/bash
+
+
+playing=$(mpc status | grep playing)
+
+if [[ ! -z $playing ]];then
+    mpc pause;
+else
+    mpc play;
+fi
+
